@@ -9,7 +9,9 @@ env:
   GKE_CLUSTER: owt-cluster    # ← 수정 필요
   GKE_ZONE: asia-southeast1       # ← 수정 필요
   DEPLOYMENT_NAME: frontend-deployment  # ← 수정 필요
-  IMAGE: frontend                   # 이미지 이름
+  REGISTRY: asia-northeast3-docker.pkg.dev
+  REPOSITORY: frontend-images
+  IMAGE: login-vite-frontend                   # 이미지 이름
 
 jobs:
   deploy:
