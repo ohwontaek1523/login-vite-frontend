@@ -2,16 +2,16 @@ name: Deploy to GKE
 
 on:
   push:
-    branches: [ main ]  # main 브랜치에 push할 때 실행
+    branches: [ main ]
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: owt-cluster    # ← 수정 필요
-  GKE_ZONE: asia-southeast1       # ← 수정 필요
-  DEPLOYMENT_NAME: frontend-deployment  # ← 수정 필요
+  GKE_CLUSTER: owt-cluster
+  GKE_ZONE: asia-southeast1
+  DEPLOYMENT_NAME: frontend-deployment
   REGISTRY: asia-northeast3-docker.pkg.dev
   REPOSITORY: frontend-images
-  IMAGE: login-vite-frontend                   # 이미지 이름
+  IMAGE: login-vite-frontend
 
 jobs:
   deploy:
@@ -29,19 +29,19 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    - name: Configure Docker for GCR
+    - name: Configure Docker for Artifact Registry
       run: |
-        gcloud auth configure-docker
+        gcloud auth configure-docker asia-northeast3-docker.pkg.dev
 
     - name: Build Docker image
       run: |
-        docker build -t gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA \
-                     -t gcr.io/$PROJECT_ID/$IMAGE:latest .
+        docker build -t asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:$GITHUB_SHA \
+                     -t asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:latest .
 
-    - name: Push to Google Container Registry
+    - name: Push to Artifact Registry
       run: |
-        docker push gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-        docker push gcr.io/$PROJECT_ID/$IMAGE:latest
+        docker push asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:$GITHUB_SHA
+        docker push asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:latest
 
     - name: Get GKE credentials
       run: |
@@ -50,5 +50,5 @@ jobs:
     - name: Deploy to GKE
       run: |
         kubectl set image deployment/$DEPLOYMENT_NAME \
-          $IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          login-vite-frontend=asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:$GITHUB_SHA
         kubectl rollout status deployment/$DEPLOYMENT_NAME
