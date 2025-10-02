@@ -54,5 +54,5 @@ jobs:
     - name: Deploy to GKE
       run: |
         kubectl set image deployment/$DEPLOYMENT_NAME \
-          login-vite-frontend=asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:$GITHUB_SHA
+          frontend-container=asia-northeast3-docker.pkg.dev/$PROJECT_ID/frontend-images/login-vite-frontend:$GITHUB_SHA
         kubectl rollout status deployment/$DEPLOYMENT_NAME
